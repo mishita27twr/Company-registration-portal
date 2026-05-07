@@ -15,6 +15,11 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/company", companyRoutes);
 
+// Root route for deployment check
+app.get("/", (req, res) => {
+  res.send("Backend deployed successfully!");
+});
+
 console.log("Routes attached");
 
 export default app;
