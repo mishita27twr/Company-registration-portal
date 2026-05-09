@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import {
   TextField, InputAdornment, IconButton, Alert, Box, Typography, Divider,
+  MenuItem,
 } from '@mui/material';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
@@ -35,12 +37,27 @@ const RegisterForm = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const { register: registerUser, loading, error } = useAuth();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    defaultValues: {
+      gender: 'o',
+      signup_type: 'e',
+    },
+  });
+
   const password = watch('password');
 
   const onSubmit = async (data) => {
-    const { confirmPassword, ...rest } = data;
-    const result = await registerUser(rest);
+    const payload = {
+      full_name: `${data.firstName} ${data.lastName}`,
+      email: data.email,
+      password: data.password,
+      gender: data.gender,
+      mobile_no: data.mobile_no,
+      signup_type: 'e',
+    };
+
+    const result = await registerUser(payload);
+
     if (result.success) {
       toast.success('Account created! Welcome aboard.');
     } else {
@@ -50,7 +67,6 @@ const RegisterForm = () => {
 
   return (
     <div className="auth-split">
-      {/* LEFT */}
       <div className="auth-split-left">
         <FloatingShape size={220} top="-80px" right="-60px" color="radial-gradient(circle, #7c3aed, transparent)" delay={0} />
         <FloatingShape size={140} bottom="60px" left="-30px" color="radial-gradient(circle, #06b6d4, transparent)" delay={2} />
@@ -84,7 +100,8 @@ const RegisterForm = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Typography
-              variant="h3" fontWeight={800}
+              variant="h3"
+              fontWeight={800}
               sx={{ color: '#fff', lineHeight: 1.2, mb: 2, fontFamily: 'Poppins, Inter, sans-serif', fontSize: { xs: '1.8rem', md: '2rem' } }}
             >
               Start your verification journey today
@@ -94,7 +111,6 @@ const RegisterForm = () => {
             </Typography>
           </motion.div>
 
-          {/* Steps */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, width: '100%' }}>
             {steps.map((step, i) => (
               <motion.div
@@ -126,7 +142,6 @@ const RegisterForm = () => {
         </motion.div>
       </div>
 
-      {/* RIGHT */}
       <div className="auth-split-right">
         <motion.div
           style={{ width: '100%', maxWidth: 420 }}
@@ -153,9 +168,12 @@ const RegisterForm = () => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
                 <TextField
-                  label="First Name" fullWidth size="medium"
+                  label="First Name"
+                  fullWidth
+                  size="medium"
                   {...register('firstName', { required: 'Required' })}
-                  error={!!errors.firstName} helperText={errors.firstName?.message}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName?.message}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -165,16 +183,25 @@ const RegisterForm = () => {
                   }}
                 />
                 <TextField
-                  label="Last Name" fullWidth size="medium"
+                  label="Last Name"
+                  fullWidth
+                  size="medium"
                   {...register('lastName', { required: 'Required' })}
-                  error={!!errors.lastName} helperText={errors.lastName?.message}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName?.message}
                 />
               </Box>
 
               <TextField
-                label="Email Address" type="email" fullWidth
-                {...register('email', { required: 'Email is required', pattern: { value: /\S+@\S+\.\S+/, message: 'Invalid email' } })}
-                error={!!errors.email} helperText={errors.email?.message}
+                label="Email Address"
+                type="email"
+                fullWidth
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: { value: /\S+@\S+\.\S+/, message: 'Invalid email' },
+                })}
+                error={!!errors.email}
+                helperText={errors.email?.message}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -184,10 +211,54 @@ const RegisterForm = () => {
                 }}
               />
 
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
+                <TextField
+                  select
+                  label="Gender"
+                  fullWidth
+                  defaultValue="o"
+                  {...register('gender', { required: 'Gender is required' })}
+                  error={!!errors.gender}
+                  helperText={errors.gender?.message}
+                >
+                  <MenuItem value="f">Female</MenuItem>
+                  <MenuItem value="m">Male</MenuItem>
+                  <MenuItem value="o">Other</MenuItem>
+                </TextField>
+
+                <TextField
+                  label="Mobile Number"
+                  fullWidth
+                  placeholder="+919876543210"
+                  {...register('mobile_no', {
+                    required: 'Mobile number is required',
+                    pattern: {
+                      value: /^\+[1-9]\d{7,14}$/,
+                      message: 'Use format +919876543210',
+                    },
+                  })}
+                  error={!!errors.mobile_no}
+                  helperText={errors.mobile_no?.message}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PhoneOutlinedIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+
               <TextField
-                label="Password" type={showPassword ? 'text' : 'password'} fullWidth
-                {...register('password', { required: 'Required', minLength: { value: 8, message: 'Min 8 characters' } })}
-                error={!!errors.password} helperText={errors.password?.message}
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                fullWidth
+                {...register('password', {
+                  required: 'Required',
+                  minLength: { value: 8, message: 'Min 8 characters' },
+                })}
+                error={!!errors.password}
+                helperText={errors.password?.message}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -205,9 +276,15 @@ const RegisterForm = () => {
               />
 
               <TextField
-                label="Confirm Password" type={showConfirm ? 'text' : 'password'} fullWidth
-                {...register('confirmPassword', { required: 'Required', validate: (v) => v === password || 'Passwords do not match' })}
-                error={!!errors.confirmPassword} helperText={errors.confirmPassword?.message}
+                label="Confirm Password"
+                type={showConfirm ? 'text' : 'password'}
+                fullWidth
+                {...register('confirmPassword', {
+                  required: 'Required',
+                  validate: (v) => v === password || 'Passwords do not match',
+                })}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -225,9 +302,12 @@ const RegisterForm = () => {
               />
 
               <CustomButton
-                type="submit" fullWidth loading={loading}
+                type="submit"
+                fullWidth
+                loading={loading}
                 sx={{
-                  py: 1.6, fontSize: '0.95rem',
+                  py: 1.6,
+                  fontSize: '0.95rem',
                   background: 'linear-gradient(90deg, #2563eb, #7c3aed)',
                   '&:hover': { background: 'linear-gradient(90deg, #1d4ed8, #6d28d9)' },
                 }}

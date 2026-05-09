@@ -20,6 +20,7 @@ export const signup = async (req, res) => {
     });
 
     const { password: _, ...safeUser } = newUser;
+const token = generateToken(safeUser);
 
 res.status(201).json({
   message: "Signup successful",
