@@ -1,5 +1,4 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://company-registration-module-n403.onrender.com';
-
+export const API_BASE_URL = "http://localhost:5000";
 export const TOKEN_KEY = 'crm_token';
 export const USER_KEY = 'crm_user';
 
