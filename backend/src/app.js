@@ -9,8 +9,13 @@ console.log("companyRoutes loaded");
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://company-registration-module-mauve.vercel.app"
+  ],
+  credentials: true
+}));app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/company", companyRoutes);
