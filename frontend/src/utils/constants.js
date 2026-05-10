@@ -27,13 +27,14 @@ export const INDUSTRIES = [
   'Energy & Utilities',
   'Consulting & Professional Services',
   'Food & Beverage',
+  'Makeup & Cosmetics',
   'Other',
 ];
 
 export const COUNTRIES = [
   'Nigeria', 'United States', 'United Kingdom', 'Canada', 'Australia',
   'Germany', 'France', 'South Africa', 'Kenya', 'Ghana',
-  'India', 'Brazil', 'UAE', 'Singapore', 'Other',
+  'India', 'Brazil', 'UAE', 'Singapore', 'Other','India', 'Brazil', 'UAE', 'Singapore', 'Other',
 ];
 
 export const ROUTES = {
